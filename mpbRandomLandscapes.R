@@ -14,7 +14,7 @@ defineModule(sim, list(
   timeframe = as.POSIXlt(c(NA, NA)),
   timeunit = "year",
   citation = list(),
-  reqdPkgs = list("RandomFields", "raster", "RColorBrewer"),
+  reqdPkgs = list("amc", "RandomFields", "raster", "RColorBrewer"),
   parameters = rbind(
     defineParameter(".plotInitialTime", "numeric", start(sim), NA, NA, "This describes the simulation time at which the first plot event should occur"),
     defineParameter(".plotInterval", "numeric", NA, NA, NA, "This describes the interval between plot events"),
@@ -41,10 +41,10 @@ doEvent.mpbRandomLandscapes <- function(sim, eventTime, eventType, debug = FALSE
     "init" = {
       ### check for more detailed object dependencies:
       ### (use `checkObject` or similar)
-  
+
       # do stuff for this event
       sim <- sim$mpbRandomLandscapesInit(sim)
-  
+
       # schedule future event(s)
       sim <- scheduleEvent(sim, P(sim)$.plotInitialTime, "mpbRandomLandscapes", "plot")
       sim <- scheduleEvent(sim, P(sim)$.saveInitialTime, "mpbRandomLandscapes", "save")
@@ -54,24 +54,24 @@ doEvent.mpbRandomLandscapes <- function(sim, eventTime, eventType, debug = FALSE
       # do stuff for this event
       Plot(sim$climateSuitabilityMap)
       Plot(sim$pineMap)
-  
+
       # schedule future event(s)
       sim <- scheduleEvent(sim, time(sim) + P(sim)$.plotInterval, "mpbRandomLandscapes", "plot")
-  
+
       # ! ----- STOP EDITING ----- ! #
     },
     "save" = {
       # ! ----- EDIT BELOW ----- ! #
       # do stuff for this event
-  
+
       # e.g., call your custom functions/methods here
       # you can define your own methods below this `doEvent` function
-  
+
       # schedule future event(s)
-  
+
       # e.g.,
       # sim <- scheduleEvent(sim, time(sim) + increment, "mpbRandomLandscapes", "save")
-  
+
       # ! ----- STOP EDITING ----- ! #
       },
       warning(paste("Undefined event type: '", events(sim)[1, "eventType", with = FALSE],
@@ -81,26 +81,12 @@ doEvent.mpbRandomLandscapes <- function(sim, eventTime, eventType, debug = FALSE
 }
 
 .inputObjects <- function(sim) {
-  # Any code written here will be run during the simInit for the purpose of creating
-  # any objects required by this module and identified in the inputObjects element of defineModule.
-  # This is useful if there is something required before simulation to produce the module
-  # object dependencies, including such things as downloading default datasets, e.g.,
-  # downloadData("LCC2005", modulePath(sim)).
-  # Nothing should be created here that does not create an named object in inputObjects.
-  # Any other initiation procedures should be put in "init" eventType of the doEvent function.
-  # Note: the module developer can use 'sim$.userSuppliedObjNames' in their function below to
-  # selectively skip unnecessary steps because the user has provided those inputObjects in the
-  # simInit call. e.g.,
-  # if (!('defaultColor' %in% sim$.userSuppliedObjNames)) {
-  #  sim$defaultColor <- 'red'
-  # }
-  
-  # ! ----- EDIT BELOW ----- ! #
-  if (!('studyArea' %in% sim$.userSuppliedObjNames)) {
-    load(file.path(modulePath(sim), "mpbRandomLandscapes", "data", "west.boreal.RData"), envir = envir(sim))
+  if (!suppliedElsewhere("studyArea")) {
+    prj <- paste("+proj=aea +lat_1=47.5 +lat_2=54.5 +lat_0=0 +lon_0=-113",
+                 "+x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0")
+    sim$studyArea <- amc::loadStudyArea(dataPath(sim), "studyArea.kml", prj)
   }
-  
-  # ! ----- STOP EDITING ----- ! #
+
   return(invisible(sim))
 }
 
