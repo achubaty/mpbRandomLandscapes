@@ -20,7 +20,7 @@ defineModule(sim, list(
     defineParameter(".plotInterval", "numeric", NA, NA, NA, "This describes the interval between plot events"),
     defineParameter(".saveInitialTime", "numeric", NA, NA, NA, "This describes the simulation time at which the first save event should occur"),
     defineParameter(".saveInterval", "numeric", NA, NA, NA, "This describes the interval between save events"),
-    defineParameter(".useCache", "numeric", FALSE, NA, NA, "Should this entire module be run with caching activated?")
+    defineParameter(".useCache", "logical", FALSE, NA, NA, "Should this entire module be run with caching activated?")
   ),
   inputObjects = bind_rows(
     expectsInput("studyArea", "SpatialPolygons",
@@ -43,7 +43,7 @@ doEvent.mpbRandomLandscapes <- function(sim, eventTime, eventType, debug = FALSE
       ### (use `checkObject` or similar)
 
       # do stuff for this event
-      sim <- sim$mpbRandomLandscapesInit(sim)
+      sim <- sim$Init(sim)
 
       # schedule future event(s)
       sim <- scheduleEvent(sim, P(sim)$.plotInitialTime, "mpbRandomLandscapes", "plot")
@@ -91,7 +91,7 @@ doEvent.mpbRandomLandscapes <- function(sim, eventTime, eventType, debug = FALSE
 }
 
 ### template initilization
-mpbRandomLandscapesInit <- function(sim) {
+Init <- function(sim) {
   # # ! ----- EDIT BELOW ----- ! #
   template <- if (is(sim$studyArea, "RasterLayer")) {
     sim$studyArea
@@ -112,16 +112,6 @@ mpbRandomLandscapesInit <- function(sim) {
   climateSuitabilityMap[] <- getValues(climateSuitabilityMap) / maxValue(climateSuitabilityMap) ## values range from 0-1
   setColors(climateSuitabilityMap) <- rev(brewer.pal(8, "Spectral"))
   sim$climateSuitabilityMap <- climateSuitabilityMap
-
-  # ! ----- STOP EDITING ----- ! #
-  return(invisible(sim))
-}
-
-### template for save events
-mpbRandomLandscapesSave <- function(sim) {
-  # ! ----- EDIT BELOW ----- ! #
-  # do stuff for this event
-  sim <- saveFiles(sim)
 
   # ! ----- STOP EDITING ----- ! #
   return(invisible(sim))
