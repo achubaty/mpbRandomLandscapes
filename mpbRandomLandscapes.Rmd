@@ -1,5 +1,5 @@
 ---
-title: "MPBRedTopLandscape"
+title: "mpbRandomLandscapes"
 author: "Module Author"
 date: "12 August 2015"
 output: pdf_document

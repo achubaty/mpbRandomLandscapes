@@ -43,7 +43,7 @@ doEvent.mpbRandomLandscapes <- function(sim, eventTime, eventType, debug = FALSE
       ### (use `checkObject` or similar)
 
       # do stuff for this event
-      sim <- sim$Init(sim)
+      sim <- Init(sim)
 
       # schedule future event(s)
       sim <- scheduleEvent(sim, P(sim)$.plotInitialTime, "mpbRandomLandscapes", "plot")
