@@ -22,11 +22,11 @@ defineModule(sim, list(
     defineParameter(".saveInterval", "numeric", NA, NA, NA, "This describes the interval between save events"),
     defineParameter(".useCache", "logical", FALSE, NA, NA, "Should this entire module be run with caching activated?")
   ),
-  inputObjects = bind_rows(
+  inputObjects = bindrows(
     expectsInput("studyArea", "SpatialPolygons",
                  "The study area to which all maps will be cropped and reprojected.", sourceURL = NA)
   ),
-  outputObjects = bind_rows(
+  outputObjects = bindrows(
     createsOutput("climateSuitabilityMap", "RasterLayer", "A climatic suitablity map for the current year."),
     createsOutput("pineMap", "RasterLayer", "Current lodgepole and jack pine available for MPB."),
     createsOutput("pineDT", "data.table", "Current lodgepole and jack pine available for MPB.")
